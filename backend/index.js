@@ -78,6 +78,7 @@ const createTestAdmin = async () => {
 };
 const app = express();
 const server = http.createServer(app);
+const socket = io('https://inventorymanagement-4r8x.onrender.com');
 
 const allowedOrigins = [
       'http://localhost:5173/',
@@ -89,17 +90,17 @@ const allowedOrigins = [
     ];
     const corsOptions = {
       origin: function (origin, callback) {
-        // Check if the origin is in the allowed origins array
+        console.log('Origin:', origin); // Log the incoming origin
         if (allowedOrigins.includes(origin) || !origin) {
           callback(null, true);
         } else {
           callback(new Error('Not allowed by CORS'));
         }
       },
-      methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
       methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'HEAD'],
       allowedHeaders: ['Content-Type', 'Authorization'],
     };
+    
 
 // Apply CORS configuration
 app.use(cors(corsOptions));
@@ -107,8 +108,20 @@ app.use(cors(corsOptions));
 app.options('*', cors(corsOptions));
 // Configure CORS for the Socket.IO server as well
 const io = new Server(server, {
-  cors: corsOptions,
-});
+      cors: {
+        origin: (origin, callback) => {
+          console.log('Request from origin:', origin); // Log the incoming origin
+          if (allowedOrigins.includes(origin) || !origin) {
+            callback(null, true);
+          } else {
+            callback(new Error('Not allowed by CORS'));
+          }
+        },
+        methods: ['GET', 'POST'],
+        allowedHeaders: ['Content-Type', 'Authorization'],
+      }
+    });
+    
 app.use(express.json());
 app.use(express.static('public'));
 app.set('io', io);
