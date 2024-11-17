@@ -79,13 +79,36 @@ const createTestAdmin = async () => {
 const app = express();
 const server = http.createServer(app);
 
+const allowedOrigins = [
+      'http://localhost:5173/',
+      'http://localhost:5175/',
+      'https://irig-computers.vercel.app/',
+      'https://irig-computers-api.vercel.app/',
+      'https://irigcomputers.vercel.app/',
+      'https://inventorymanagement-4r8x.onrender.com/'
+    ];
+    const corsOptions = {
+      origin: function (origin, callback) {
+        // Check if the origin is in the allowed origins array
+        if (allowedOrigins.includes(origin) || !origin) {
+          callback(null, true);
+        } else {
+          callback(new Error('Not allowed by CORS'));
+        }
+      },
+      methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
+      methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'HEAD'],
+      allowedHeaders: ['Content-Type', 'Authorization'],
+    };
 
 // Apply CORS configuration
-app.use(cors());
+app.use(cors(corsOptions));
 // Handle preflight requests for all routes
-app.options('*', cors());
+app.options('*', cors(corsOptions));
 // Configure CORS for the Socket.IO server as well
-const io = new Server(server);
+const io = new Server(server, {
+  cors: corsOptions,
+});
 app.use(express.json());
 app.use(express.static('public'));
 app.set('io', io);
