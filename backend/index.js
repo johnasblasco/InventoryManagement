@@ -79,15 +79,9 @@ const createTestAdmin = async () => {
 const app = express();
 const server = http.createServer(app);
 
-const corsOptions = {
-  origin: true, // Allow all origins
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'HEAD'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
-};
 
 // Apply CORS configuration
-app.use(cors(corsOptions));
+app.use(cors());
 // Handle preflight requests for all routes
 app.options('*', cors(corsOptions));
 // Configure CORS for the Socket.IO server as well
