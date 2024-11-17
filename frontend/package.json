@@ -1,5 +1,5 @@
 {
-  "proxy": "irig-computers-api.vercel.app",
+  "proxy": "https://inventorymanagement-4r8x.onrender.com",
   "name": "frontend",
   "private": true,
   "version": "0.0.0",
