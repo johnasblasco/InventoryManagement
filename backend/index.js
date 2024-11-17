@@ -83,11 +83,9 @@ const server = http.createServer(app);
 // Apply CORS configuration
 app.use(cors());
 // Handle preflight requests for all routes
-app.options('*', cors(corsOptions));
+app.options('*', cors());
 // Configure CORS for the Socket.IO server as well
-const io = new Server(server, {
-  cors: corsOptions,
-});
+const io = new Server(server);
 app.use(express.json());
 app.use(express.static('public'));
 app.set('io', io);
